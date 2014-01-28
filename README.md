@@ -78,3 +78,46 @@ Add
 Refresh your page, and you see:
 
 > The current time is: .
+
+Open your controller, and define the time variable for the **$scope**.
+    
+    // add inside MyCtrl1
+    $scope.time = new Date();
+
+Refresh.  Oh, crap.
+
+> ReferenceError: $scope is not defined at new <anonymous> (http://localhost:8000/app/js/controllers.js:8:4)
+
+How do we define this key variable?
+
+Dependencies are defined in a somewhat awkward way.  The reason for this is the *name* of the variable is important in Angular and minification renames variables.  To get around this, you can (and must in this example) inject **$scope** into your controller the following way.
+
+    controller(
+
+      // controller's name
+      'MyCtrl1', 
+
+      // arguments
+      [
+
+        // injected services
+        '$scope',
+
+        // constructor for the controller
+        function ($scope) {
+          $scope.time = new Date();
+        }
+      ]
+    );
+
+You wouldn't normally see all this whitespace, but I'm trying to make it easy to read.
+
+Now, when we reload our main page, 
+
+* the shell html is loaded along with our scripts
+* our app is defined and configured to use a few routes
+* our default route loads our controller (MyCtrl1), injected with the all important **$scope**
+* the route also loads a partial for us, which has a binding to our controller {{ time }}
+* the partial is popped into the outer shell html, and its binding is updated from our controller
+
+OK, this is still a rather lame app, but at least we have a bit of an idea about what's happening.  Let's see what else we can do.
